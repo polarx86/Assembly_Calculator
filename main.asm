@@ -15,9 +15,13 @@ section .data
     len_result_msg equ $ - result_msg
 
     msg_erro db 10, "Caractere invalido, reiniciando...", 10
-    len_erro equ $ - msg_erro   
+    len_erro equ $ - msg_erro
 
     clear_screen db 27, '[2J', 27, '[H'
+
+    tempo:
+        segundos  dq 3      ; 3 segundos
+        nanosegundos dq 0      ; 0 nanosegundos
 
     newline db 10
 
@@ -28,7 +32,7 @@ section .bss
     result resq 1
 
 section .text
-global _start 
+global _start
 
 _start:
     call clear
@@ -104,8 +108,6 @@ _start:
     cmp rax, 4
     je dividir
 
-    jmp _start
-
 somar:
     mov rax, [num1]
     mov rbx, [num2]
@@ -179,7 +181,8 @@ validar_input:
     mov rdi, 1
     mov rsi, msg_erro
     mov rdx, len_erro
-    syscall 
+    syscall
+    call temporizador
     jmp _start
 
 .voltar:
@@ -201,23 +204,24 @@ validar_operacao:
     mov rdi, 1
     mov rsi, msg_erro
     mov rdx, len_erro
-    syscall 
+    syscall
+    call temporizador
     jmp _start
 
 str_to_int:
     mov rax, 0
-    
+
 .prox_num:
     mov dl, byte[rsi]
     inc rsi
 
-    cmp dl, 48 
+    cmp dl, 48
     jl .fim
-    cmp dl, 57 
+    cmp dl, 57
     jg .fim
-    sub dl, 48 
-    imul rax, 10 
-    add rax, rdx 
+    sub dl, 48
+    imul rax, 10
+    add rax, rdx
 
     jmp .prox_num
 
@@ -229,11 +233,11 @@ int_to_str:
 
 .prox_digito:
     mov rdx, 0
-    div rbx 
-    add dl, '0' 
+    div rbx
+    add dl, '0'
     mov byte[rsi], dl
     dec rsi
-    cmp rax, 0 
+    cmp rax, 0
     jnz .prox_digito
     ret
 
@@ -242,5 +246,13 @@ clear:
     mov rdi, 1
     mov rsi, clear_screen
     mov rdx, 7
+    syscall
+    ret
+
+temporizador:
+    lea rdi, [tempo]
+    mov rax, 35
+    mov rsi, rdi
+    xor rdx, rdx
     syscall
     ret
