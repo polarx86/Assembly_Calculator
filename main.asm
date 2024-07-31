@@ -1,20 +1,20 @@
 section .data
-    title db "<< +- ASM CALCULATOR x/ >>", 0, 10
+    title db "<< +- ASM CALCULATOR x/ >>", 10
     len_title equ $ - title
 
-    num1_msg db "Digite o primeiro numero: ", 0
+    num1_msg db "Digite o primeiro numero: "
     len_num1_msg equ $ - num1_msg
 
-    op_msg db 10, "Qual operacao voce deseja fazer?", 10, "1 - Adicao(+)", 10, "2 - Subtracao(-)", 10, "3 - multiplicacao(x)", 10, "4 - Divisao(/)", 10, "Insira sua escolha: ", 0
+    op_msg db 10, "Qual operacao voce deseja fazer?", 10, "1 - Adicao(+)", 10, "2 - Subtracao(-)", 10, "3 - multiplicacao(x)", 10, "4 - Divisao(/)", 10, "Insira sua escolha: "
     len_op_msg equ num2_msg - op_msg
 
-    num2_msg db 10, "Digite o segundo numero: ", 0
+    num2_msg db 10, "Digite o segundo numero: "
     len_num2_msg equ $ - num2_msg
 
-    result_msg db 10, "O resultado da sua operacao foi: ", 0
+    result_msg db 10, "O resultado da sua operacao foi: "
     len_result_msg equ $ - result_msg
 
-    msg_erro db 10, "Caractere invalido, reiniciando...", 0, 10
+    msg_erro db 10, "Caractere invalido, reiniciando...", 10
     len_erro equ $ - msg_erro   
 
     newline db 10
@@ -88,56 +88,52 @@ _start:
     call str_to_int
     mov [num2], rax
 
-operacoes:
     mov rax, [operacao]
     cmp rax, 1
-    je .somar
+    je somar
 
     cmp rax, 2
-    je .subtrair
+    je subtrair
 
     cmp rax, 3
-    je .multiplicar
+    je multiplicar
 
     cmp rax, 4
-    je .dividir
+    je dividir
 
     jmp _start
 
-.somar:
+somar:
     mov rax, [num1]
     mov rbx, [num2]
     add rax, rbx
     call int_to_str
-    mov [result], rsi
     jmp saida
 
-.subtrair:
+subtrair:
     mov rax, [num1]
     mov rbx, [num2]
     sub rax, rbx
     call int_to_str
-    mov [result], rsi
     jmp saida
 
-.multiplicar:
+multiplicar:
     mov rax, [num1]
     mov rbx, [num2]
     imul rax, rbx
     call int_to_str
-    mov [result], rsi
     jmp saida
 
-.dividir:
+dividir:
     xor rdx, rdx
     mov rax, [num1]
     mov rbx, [num2]
     div rbx
     call int_to_str
-    mov [result], rsi
     jmp saida
 
 saida:
+    mov [result], rsi
     mov rax, 1
     mov rdi, 1
     mov rsi, result_msg
