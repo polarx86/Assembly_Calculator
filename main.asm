@@ -17,6 +17,8 @@ section .data
     msg_erro db 10, "Caractere invalido, reiniciando...", 10
     len_erro equ $ - msg_erro   
 
+    clear_screen db 27, '[2J', 27, '[H'
+
     newline db 10
 
 section .bss
@@ -29,6 +31,7 @@ section .text
 global _start 
 
 _start:
+    call clear
     mov rax, 1
     mov rdi, 1
     mov rsi, title
@@ -232,4 +235,12 @@ int_to_str:
     dec rsi
     cmp rax, 0 
     jnz .prox_digito
+    ret
+
+clear:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, clear_screen
+    mov rdx, 7
+    syscall
     ret
