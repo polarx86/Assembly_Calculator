@@ -78,10 +78,10 @@ _start:
     mov rdx, 8
     syscall
 
-    call validar_operacao
-
     call str_to_int
     mov [operacao], rax
+
+    call validar_operacao
 
     mov rax, 1
     mov rdi, 1
@@ -187,12 +187,12 @@ validar_input:
     ret
 
 validar_operacao:
-    mov al, byte[rsi]
+    mov rax, [operacao]
 
-    cmp al, 0x31
+    cmp rax, 1
     jl .erro
 
-    cmp al, 0x34
+    cmp al, 4
     jg .erro
 
     ret
