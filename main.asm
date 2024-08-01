@@ -6,7 +6,7 @@ section .data
     len_num1_msg equ $ - num1_msg
 
     op_msg db 10, "Qual operacao voce deseja fazer?", 10, "1 - Adicao(+)", 10, "2 - Subtracao(-)", 10, "3 - multiplicacao(x)", 10, "4 - Divisao(/)", 10, "Insira sua escolha: "
-    len_op_msg equ num2_msg - op_msg
+    len_op_msg equ $ - op_msg
 
     num2_msg db 10, "Digite o segundo numero: "
     len_num2_msg equ $ - num2_msg
@@ -20,15 +20,17 @@ section .data
     clear_screen db 27, '[2J', 27, '[H'
 
     tempo:
-        segundos  dq 3      ; 3 segundos
-        nanosegundos dq 0      ; 0 nanosegundos
+        segundos  dq 3
+        nanosegundos dq 0
 
-    newline db 10
+    jgr_novamente_msg db 10, "Deseja jogar novamente? [s/n] "
+    len_jgr_novamente_msg equ $ - jgr_novamente_msg
 
 section .bss
     num1 resq 1
     num2 resq 1
     operacao resq 1
+    escolha resb 1
     result resq 1
 
 section .text
@@ -36,6 +38,7 @@ global _start
 
 _start:
     call clear
+
     mov rax, 1
     mov rdi, 1
     mov rsi, title
@@ -53,6 +56,9 @@ _start:
     mov rsi, num1
     mov rdx, 8
     syscall
+
+    cmp byte[num1], 0xa
+    je _start
 
     call validar_input
 
@@ -151,15 +157,7 @@ saida:
     mov rdx, 8
     syscall
 
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, newline
-    mov rdx, 1
-    syscall
-
-    mov rax, 60
-    xor rdi, rdi
-    syscall
+    jmp jogar_novamente
 
 validar_input:
     mov al, byte[rsi]
@@ -256,3 +254,37 @@ temporizador:
     xor rdx, rdx
     syscall
     ret
+
+jogar_novamente:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, jgr_novamente_msg
+    mov rdx, len_jgr_novamente_msg
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, escolha
+    mov rdx, 1
+    syscall
+
+    mov al, [escolha]
+    cmp al, 0x53
+    jz _start
+
+    cmp al, 0x73
+    jz _start
+
+    cmp al, 0x4E
+    jz .fim
+
+    cmp al, 0x6E
+    jz .fim
+
+    call clear
+    jmp jogar_novamente
+
+.fim:
+    mov rax, 60
+    xor rdi, rdi
+    syscall
