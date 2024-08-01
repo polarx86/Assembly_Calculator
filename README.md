@@ -8,7 +8,10 @@ Este projeto implementa uma calculadora simples em Assembly, capaz de solicitar 
 
 ## Compilação e Execução
 
-Para compilar e executar o código, você pode usar as seguintes ferramentas:
+Primeiro, clone o repositório para sua máquina.
+```
+git clone https://github.com/polarx86/Assembly_Calculator
+```
 
 No Linux: Use o nasm para compilar e ld para linkar.
 
